@@ -39,6 +39,7 @@ int main()
         printf("4. Salvar Filmes \n");
         printf("5. Carregar Filmes \n");
         printf("6. Pesquisar filme \n");
+        printf("10. Sair\n");
         printf("Escolha uma opção: ");
         scanf("%d", &opcao);
 
@@ -74,7 +75,9 @@ int main()
             break;
         case 6:
             printf("\nDigite o título do filme que você está procurando.\n");
+            getchar();
             fgets(name, MAX_STRING, stdin);
+            name[strcspn(name, "\n")] = '\0';
             searchMovie(name);
             break;
         default:
@@ -140,7 +143,27 @@ void mostrarFilmes()
 }
 
 void searchMovie(char name[MAX_STRING]) {
+    int i;
+    Filme f;
+    int isMovieAvailable = 0;
     printf("%s", name);
+    for (i = 0; i < MAX_FILMES; i++) {
+        if (strcmp(name, filmes[i].titulo) == 0) {
+            f = filmes[i];
+            isMovieAvailable = 1;
+        }
+    }
+    
+    if (isMovieAvailable == 0) {
+        printf("\nFilme nao encontrado!\n");
+        return;
+    }
+
+    printf("\nTítulo: %s\n", f.titulo);
+    printf("Diretor: %s\n", f.diretor);
+    printf("Ano de Lançamento: %d\n", f.anoLancamento);
+    printf("Classificação: %.1f\n", f.classificacao);
+    printf("Quantidade em estoque: %d\n", f.quantidade);
 
 }
 
