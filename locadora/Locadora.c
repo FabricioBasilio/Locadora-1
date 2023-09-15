@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #define ARQUIVO "./filmes.txt"
 
 #define MAX_STRING 100
@@ -20,6 +21,8 @@ void exibirFilme(int i);
 void salvarFilmes();
 void carregarFilmes();
 void searchMovie(char nome[MAX_STRING]);
+void showOtherOptions(Filme f);
+void deleteMovie(Filme f);
 
 Filme filmes[MAX_FILMES];
 int totalFilmes = 0;
@@ -40,8 +43,12 @@ int main()
         printf("5. Carregar Filmes \n");
         printf("6. Pesquisar filme \n");
         printf("10. Sair\n");
-        printf("Escolha uma opção: ");
+        printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
+        if (isdigit(opcao)) {
+            printf("\nDigite um número!\n");
+            continue;
+        }
 
         switch (opcao)
         {
@@ -143,10 +150,10 @@ void mostrarFilmes()
 }
 
 void searchMovie(char name[MAX_STRING]) {
-    int i;
+    int i, isMovieAvailable = 0;
     Filme f;
-    int isMovieAvailable = 0;
     printf("%s", name);
+
     for (i = 0; i < MAX_FILMES; i++) {
         if (strcmp(name, filmes[i].titulo) == 0) {
             f = filmes[i];
@@ -164,6 +171,52 @@ void searchMovie(char name[MAX_STRING]) {
     printf("Ano de Lançamento: %d\n", f.anoLancamento);
     printf("Classificação: %.1f\n", f.classificacao);
     printf("Quantidade em estoque: %d\n", f.quantidade);
+
+    //Fazer o filme excluir (opcoes)
+    showOtherOptions(f);
+
+}
+
+void showOtherOptions(Filme f) {
+    int option;
+    do {
+    printf("\n- - - Acoes para o filme - - -\n");
+    printf("1. Alugar filme\n");
+    printf("2. Excluir filme\n");
+    printf("3. Ir para a tela principal\n");
+    printf("Escolha uma opcao: ");
+    scanf("%d", &option);
+
+    switch (option) {
+        case 1:
+        printf("\nFuncao ainda nao definida\n");
+        return;
+        break;
+        case 2:
+        deleteMovie(f);
+        return;
+        break;
+        case 3:
+        return;
+        break;
+        default:
+        printf("\nOpcao invalida!\n");
+    }
+    } while(option != 4);
+}
+
+void deleteMovie(Filme f) {
+    int i, deletedMovieIndex;
+    for (i = 0; i < MAX_FILMES; i++) {
+        if (strcmp(filmes[i].titulo, f.titulo) == 0) 
+        deletedMovieIndex = i;
+    }
+
+    for (i = deletedMovieIndex; i < MAX_FILMES; i++) {
+        filmes[i] = filmes[i + 1];
+    }
+    totalFilmes--;
+    mostrarFilmes();
 
 }
 
