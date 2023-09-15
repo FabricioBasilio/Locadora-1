@@ -19,14 +19,17 @@ Filme cadastrarFilme();
 void exibirFilme(int i);
 void salvarFilmes();
 void carregarFilmes();
+void searchMovie(char nome[MAX_STRING]);
 
 Filme filmes[MAX_FILMES];
 int totalFilmes = 0;
 
+// DEVER DE CASA: ENCONTRAR O FILME PELA STRING 
+
 int main()
 {
     int opcao, index;
-
+    char name[MAX_STRING];
     do
     {
         printf("\n- - - Locadora de Filmes - - -\n");
@@ -35,6 +38,7 @@ int main()
         printf("3. Ver Dados de um filme\n");
         printf("4. Salvar Filmes \n");
         printf("5. Carregar Filmes \n");
+        printf("6. Pesquisar filme \n");
         printf("Escolha uma opção: ");
         scanf("%d", &opcao);
 
@@ -68,11 +72,16 @@ int main()
         case 5:
             carregarFilmes();
             break;
+        case 6:
+            printf("\nDigite o título do filme que você está procurando.\n");
+            fgets(name, MAX_STRING, stdin);
+            searchMovie(name);
+            break;
         default:
             printf("\nOpção inválida!\n");
         }
 
-    } while (opcao != 6);
+    } while (opcao != 10);
 
     return 0;
 }
@@ -130,6 +139,11 @@ void mostrarFilmes()
     }
 }
 
+void searchMovie(char name[MAX_STRING]) {
+    printf("%s", name);
+
+}
+
 void salvarFilmes() {
     FILE *file = fopen(ARQUIVO, "w");
     if (file == NULL) {
@@ -168,3 +182,9 @@ void carregarFilmes() {
 
     fclose(file);
 }
+
+
+// \"%[^\"]\": scan string??
+// O que fazer para pesquisar...
+// criar sexta função para pesquisar por string search(char string[MAX_STRING]);
+
