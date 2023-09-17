@@ -20,35 +20,34 @@ Filme cadastrarFilme();
 void exibirFilme(int i);
 void salvarFilmes();
 void carregarFilmes();
-void searchMovie(char nome[MAX_STRING]);
-void showOtherOptions(Filme f);
+int searchMovie(char nome[MAX_STRING]);
+int showOtherOptions();
 void deleteMovie(Filme f);
+int rentMovies(Filme f);
 
 Filme filmes[MAX_FILMES];
 int totalFilmes = 0;
 
-// DEVER DE CASA: ENCONTRAR O FILME PELA STRING 
+// DEVER DE CASA: ENCONTRAR O FILME PELA STRING
 
 int main()
 {
-    int opcao, index;
+    int opcao, index, i, isMovieAvailable = 0, opcaoAcaoFilme, quantidadeAlugada;
+    Filme f;
     char name[MAX_STRING];
     do
     {
         printf("\n- - - Locadora de Filmes - - -\n");
-        printf("1. Cadastrar Filme\n");
-        printf("2. Ver Filmes Cadastrados\n");
-        printf("3. Ver Dados de um filme\n");
-        printf("4. Salvar Filmes \n");
-        printf("5. Carregar Filmes \n");
-        printf("6. Pesquisar filme \n");
-        printf("10. Sair\n");
+        printf("1. Cadastrar filme \n");
+        printf("2. Ver filmes cadastrados\n");
+        printf("3. Pesquisar filme pelo indice \n");
+        printf("4. Salvar filmes cadastrados \n");
+        printf("5. Carregar filmes \n");
+        printf("6. Pesquisar filme pelo titulo \n");
+        printf("10. Sair \n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
-        if (isdigit(opcao)) {
-            printf("\nDigite um número!\n");
-            continue;
-        }
+        printf("%d", opcao);
 
         switch (opcao)
         {
@@ -62,7 +61,7 @@ int main()
             }
             else
             {
-                printf("Quantidade máxima de filmes cadastrada");
+                printf("\nQuantidade máxima de filmes cadastrada!\n");
             }
             break;
         case 2:
@@ -70,7 +69,7 @@ int main()
 
             break;
         case 3:
-            printf("Informe o indice do filme que você deseja: ");
+            printf("Digite o indice do filme que voce esta procurando: ");
             scanf("%d", &index);
             exibirFilme(index);
             break;
@@ -81,11 +80,47 @@ int main()
             carregarFilmes();
             break;
         case 6:
-            printf("\nDigite o título do filme que você está procurando.\n");
+            printf("\nDigite o titulo do filme que voce esta procurando.\n");
             getchar();
             fgets(name, MAX_STRING, stdin);
             name[strcspn(name, "\n")] = '\0';
-            searchMovie(name);
+            for (i = 0; i < MAX_FILMES; i++)
+            {
+                if (strcmp(name, filmes[i].titulo) == 0)
+                {
+                    f = filmes[i];
+                    isMovieAvailable = 1;
+                }
+            }
+
+            if (isMovieAvailable == 0)
+            {
+                printf("\nFilme nao encontrado!\n");
+                printf("Isso foi impresso pois o filme nao foi encontrado\n");
+                break;
+            }
+            printf("\nIsso foi impresso pq o filme foi encontrado\n");
+
+            printf("\nTítulo: %s\n", f.titulo);
+            printf("Diretor: %s\n", f.diretor);
+            printf("Ano de Lançamento: %d\n", f.anoLancamento);
+            printf("Classificação: %.1f\n", f.classificacao);
+            printf("Quantidade em estoque: %d\n", f.quantidade);
+            opcaoAcaoFilme = showOtherOptions();
+            if (opcaoAcaoFilme == 1) {
+                quantidadeAlugada = rentMovies(f);
+                if (quantidadeAlugada == 0) break;
+                printf("\nquantidade alugada: %d\n", quantidadeAlugada);
+                f.quantidade -= quantidadeAlugada;
+                printf("\nquantidade alugada atualizada: %d\n", f.quantidade);
+                mostrarFilmes();
+            }
+            else if (opcaoAcaoFilme == 2) {
+                deleteMovie(f);
+            }
+            else {
+                break;
+            }
             break;
         default:
             printf("\nOpção inválida!\n");
@@ -102,7 +137,7 @@ Filme cadastrarFilme()
     getchar();
 
     printf("\n- - - Cadastro de Filme - - -\n");
-    printf("Informe o título do filme: ");
+    printf("Informe o titulo do filme: ");
     fgets(f.titulo, MAX_STRING, stdin);
     f.titulo[strcspn(f.titulo, "\n")] = '\0';
 
@@ -110,13 +145,13 @@ Filme cadastrarFilme()
     fgets(f.diretor, MAX_STRING, stdin);
     f.diretor[strcspn(f.diretor, "\n")] = '\0';
 
-    printf("Informe o ano de lançamento do filme: ");
+    printf("Informe o ano de lancamento do filme: ");
     scanf("%d", &f.anoLancamento);
 
-    printf("Informe a classificação do filme (0.0 a 10.0): ");
+    printf("Informe a classificacao do filme (0.0 a 10.0): ");
     scanf("%f", &f.classificacao);
 
-    printf("Informe a quantidade de cópias em estoque: ");
+    printf("Informe a quantidade de copias em estoque: ");
     scanf("%d", &f.quantidade);
 
     return f;
@@ -149,90 +184,95 @@ void mostrarFilmes()
     }
 }
 
-void searchMovie(char name[MAX_STRING]) {
-    int i, isMovieAvailable = 0;
-    Filme f;
-    printf("%s", name);
-
-    for (i = 0; i < MAX_FILMES; i++) {
-        if (strcmp(name, filmes[i].titulo) == 0) {
-            f = filmes[i];
-            isMovieAvailable = 1;
-        }
-    }
-    
-    if (isMovieAvailable == 0) {
-        printf("\nFilme nao encontrado!\n");
-        return;
-    }
-
-    printf("\nTítulo: %s\n", f.titulo);
-    printf("Diretor: %s\n", f.diretor);
-    printf("Ano de Lançamento: %d\n", f.anoLancamento);
-    printf("Classificação: %.1f\n", f.classificacao);
-    printf("Quantidade em estoque: %d\n", f.quantidade);
-
-    //Fazer o filme excluir (opcoes)
-    showOtherOptions(f);
-
-}
-
-void showOtherOptions(Filme f) {
+int showOtherOptions()
+{
     int option;
-    do {
-    printf("\n- - - Acoes para o filme - - -\n");
-    printf("1. Alugar filme\n");
-    printf("2. Excluir filme\n");
-    printf("3. Ir para a tela principal\n");
-    printf("Escolha uma opcao: ");
-    scanf("%d", &option);
+    do
+    {
+        printf("\n- - - Acoes para o filme - - -\n");
+        printf("1. Alugar filme\n");
+        printf("2. Excluir filme\n");
+        printf("3. Ir para a tela principal\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &option);
 
-    switch (option) {
+        switch (option)
+        {
         case 1:
-        printf("\nFuncao ainda nao definida\n");
-        return;
-        break;
+            return option;
+            break;
         case 2:
-        deleteMovie(f);
-        return;
-        break;
+            return option;
+            break;
         case 3:
-        return;
-        break;
+            return option;
+            break;
         default:
-        printf("\nOpcao invalida!\n");
-    }
-    } while(option != 4);
+            printf("\nOpcao invalida!\n");
+        }
+    } while (option != 4);
 }
 
-void deleteMovie(Filme f) {
-    int i, deletedMovieIndex;
-    for (i = 0; i < MAX_FILMES; i++) {
-        if (strcmp(filmes[i].titulo, f.titulo) == 0) 
-        deletedMovieIndex = i;
+int rentMovies(Filme f)
+{
+    int quantidadeDemanda;
+    if (f.quantidade == 0)
+    {
+        printf("\nFilme esgotado!\n");
+        return 0;
     }
 
-    for (i = deletedMovieIndex; i < MAX_FILMES; i++) {
+    do
+    {
+        printf("\nQuantidade disponivel: %d\n", f.quantidade);
+
+        printf("Informe quantas copias voce quer: ");
+
+        scanf("%d", &quantidadeDemanda);
+
+        if (quantidadeDemanda > f.quantidade)
+            printf("\nQuantidade maior que a disponivel, tente novamente!\n");
+
+        if (quantidadeDemanda == 0)
+            printf("\nQuantidade igual a zero, tente novamente!\n");
+
+    } while (quantidadeDemanda > f.quantidade || quantidadeDemanda == 0);
+    return quantidadeDemanda;
+}
+
+void deleteMovie(Filme f)
+{
+    int i, deletedMovieIndex;
+    for (i = 0; i < MAX_FILMES; i++)
+    {
+        if (strcmp(filmes[i].titulo, f.titulo) == 0)
+            deletedMovieIndex = i;
+    }
+
+    for (i = deletedMovieIndex; i < MAX_FILMES; i++)
+    {
         filmes[i] = filmes[i + 1];
     }
     totalFilmes--;
     mostrarFilmes();
-
 }
 
-void salvarFilmes() {
+void salvarFilmes()
+{
     FILE *file = fopen(ARQUIVO, "w");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         printf("Erro ao salvar os filmes!\n");
         return;
     }
 
-    for (int i = 0; i < totalFilmes; i++) {
-        fprintf(file, "\"%s\",\"%s\",%d,%.1f,%d\n", 
-                filmes[i].titulo, 
-                filmes[i].diretor, 
-                filmes[i].anoLancamento, 
-                filmes[i].classificacao, 
+    for (int i = 0; i < totalFilmes; i++)
+    {
+        fprintf(file, "\"%s\",\"%s\",%d,%.1f,%d\n",
+                filmes[i].titulo,
+                filmes[i].diretor,
+                filmes[i].anoLancamento,
+                filmes[i].classificacao,
                 filmes[i].quantidade);
     }
 
@@ -240,27 +280,28 @@ void salvarFilmes() {
     printf("Filmes salvos com sucesso!\n");
 }
 
-void carregarFilmes() {
+void carregarFilmes()
+{
     FILE *file = fopen(ARQUIVO, "r");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         printf("Arquivo não existe ou não pôde ser aberto.");
         return; // Se o arquivo não existir ou não puder ser aberto, simplesmente retorna
     }
 
-    while (fscanf(file, "\"%[^\"]\",\"%[^\"]\",%d,%f,%d\n", 
-                  filmes[totalFilmes].titulo, 
-                  filmes[totalFilmes].diretor, 
-                  &filmes[totalFilmes].anoLancamento, 
-                  &filmes[totalFilmes].classificacao, 
-                  &filmes[totalFilmes].quantidade) != EOF) {
+    while (fscanf(file, "\"%[^\"]\",\"%[^\"]\",%d,%f,%d\n",
+                  filmes[totalFilmes].titulo,
+                  filmes[totalFilmes].diretor,
+                  &filmes[totalFilmes].anoLancamento,
+                  &filmes[totalFilmes].classificacao,
+                  &filmes[totalFilmes].quantidade) != EOF)
+    {
         totalFilmes++;
     }
 
     fclose(file);
 }
 
-
 // \"%[^\"]\": scan string??
 // O que fazer para pesquisar...
 // criar sexta função para pesquisar por string search(char string[MAX_STRING]);
-
