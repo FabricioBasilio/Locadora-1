@@ -21,8 +21,8 @@ void exibirFilme(int i);
 void salvarFilmes();
 void carregarFilmes();
 int showOtherOptions();
-void deleteMovie(Filme f);
-int rentMovies(Filme f);
+void deleteMovie(Filme* f);
+int rentMovies(Filme* f);
 
 Filme filmes[MAX_FILMES];
 int totalFilmes = 0;
@@ -32,7 +32,7 @@ int totalFilmes = 0;
 int main()
 {
     int opcao, index, i, isMovieAvailable = 0, opcaoAcaoFilme, quantidadeAlugada;
-    Filme f;
+    Filme *f;
     char name[MAX_STRING];
     do
     {
@@ -95,7 +95,7 @@ int main()
             {
                 if (strcmp(name, filmes[i].titulo) == 0)
                 {
-                    f = filmes[i];
+                    f = &filmes[i];
                     isMovieAvailable = 1;
                 }
             }
@@ -108,18 +108,18 @@ int main()
             }
             printf("\nIsso foi impresso pq o filme foi encontrado\n");
 
-            printf("\nTítulo: %s\n", f.titulo);
-            printf("Diretor: %s\n", f.diretor);
-            printf("Ano de Lançamento: %d\n", f.anoLancamento);
-            printf("Classificação: %.1f\n", f.classificacao);
-            printf("Quantidade em estoque: %d\n", f.quantidade);
+            printf("\nTítulo: %s\n", f->titulo);
+            printf("Diretor: %s\n", f->diretor);
+            printf("Ano de Lançamento: %d\n", f->anoLancamento);
+            printf("Classificação: %.1f\n", f->classificacao);
+            printf("Quantidade em estoque: %d\n", f->quantidade);
             opcaoAcaoFilme = showOtherOptions();
             if (opcaoAcaoFilme == 1) {
                 quantidadeAlugada = rentMovies(f);
                 if (quantidadeAlugada == 0) break;
                 printf("\nquantidade alugada: %d\n", quantidadeAlugada);
-                f.quantidade -= quantidadeAlugada;
-                printf("\nquantidade alugada atualizada: %d\n", f.quantidade);
+                f->quantidade -= quantidadeAlugada;
+                printf("\nquantidade alugada atualizada: %d\n", f->quantidade);
                 mostrarFilmes();
             }
             else if (opcaoAcaoFilme == 2) {
@@ -218,10 +218,10 @@ int showOtherOptions()
     } while (option != 4);
 }
 
-int rentMovies(Filme f)
+int rentMovies(Filme *f)
 {
     int quantidadeDemanda;
-    if (f.quantidade == 0)
+    if (f->quantidade == 0)
     {
         printf("\nFilme esgotado!\n");
         return 0;
@@ -229,28 +229,28 @@ int rentMovies(Filme f)
 
     do
     {
-        printf("\nQuantidade disponivel: %d\n", f.quantidade);
+        printf("\nQuantidade disponivel: %d\n", f->quantidade);
 
         printf("Informe quantas copias voce quer: ");
 
         scanf("%d", &quantidadeDemanda);
 
-        if (quantidadeDemanda > f.quantidade)
+        if (quantidadeDemanda > f->quantidade)
             printf("\nQuantidade maior que a disponivel, tente novamente!\n");
 
         if (quantidadeDemanda == 0)
             printf("\nQuantidade igual a zero, tente novamente!\n");
 
-    } while (quantidadeDemanda > f.quantidade || quantidadeDemanda == 0);
+    } while (quantidadeDemanda > f->quantidade || quantidadeDemanda == 0);
     return quantidadeDemanda;
 }
 
-void deleteMovie(Filme f)
+void deleteMovie(Filme *f)
 {
     int i, deletedMovieIndex;
     for (i = 0; i < MAX_FILMES; i++)
     {
-        if (strcmp(filmes[i].titulo, f.titulo) == 0)
+        if (strcmp(filmes[i].titulo, f->titulo) == 0)
             deletedMovieIndex = i;
     }
 
