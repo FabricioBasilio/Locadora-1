@@ -20,7 +20,6 @@ Filme cadastrarFilme();
 void exibirFilme(int i);
 void salvarFilmes();
 void carregarFilmes();
-int searchMovie(char nome[MAX_STRING]);
 int showOtherOptions();
 void deleteMovie(Filme f);
 int rentMovies(Filme f);
@@ -69,9 +68,14 @@ int main()
 
             break;
         case 3:
+            if (totalFilmes == 0) {
+                printf("\nNenhum filme foi cadastrado ainda!\n");
+                }
+                else {
             printf("Digite o indice do filme que voce esta procurando: ");
             scanf("%d", &index);
             exibirFilme(index);
+            }
             break;
         case 4:
             salvarFilmes();
@@ -80,6 +84,9 @@ int main()
             carregarFilmes();
             break;
         case 6:
+        if (totalFilmes == 0) {
+            printf("\nNenhum filme foi cadastrado ainda!\n");
+        } else {
             printf("\nDigite o titulo do filme que voce esta procurando.\n");
             getchar();
             fgets(name, MAX_STRING, stdin);
@@ -121,6 +128,7 @@ int main()
             else {
                 break;
             }
+        }
             break;
         default:
             printf("\nOpção inválida!\n");
@@ -171,10 +179,7 @@ void mostrarFilmes()
 {
     printf("\n- - - Lista de Filmes - - -\n");
 
-    if (totalFilmes == 0)
-    {
-        printf("Nenhum filme foi cadastrado ainda!\n");
-    }
+    if (totalFilmes == 0) printf("Nenhum filme foi cadastrado ainda!\n");
     else
     {
         for (int i = 0; i < totalFilmes; i++)
