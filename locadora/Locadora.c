@@ -22,7 +22,8 @@ void salvarFilmes();
 void carregarFilmes();
 int showOtherOptions();
 void deleteMovie(Filme* f);
-int rentMovies(Filme* f);
+int rentMovies(int quantidadeDisponivel);
+void printReceipt(char title[MAX_STRING], int quantidade);
 
 Filme filmes[MAX_FILMES];
 int totalFilmes = 0;
@@ -46,32 +47,24 @@ int main()
         printf("10. Sair \n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
-        printf("%d", opcao);
 
         switch (opcao)
         {
         case 1:
-
             if (totalFilmes < MAX_FILMES)
             {
                 filmes[totalFilmes] = cadastrarFilme();
                 totalFilmes++;
                 printf("\nFilme cadastrado com sucesso!\n");
             }
-            else
-            {
-                printf("\nQuantidade máxima de filmes cadastrada!\n");
-            }
+            else printf("\nQuantidade máxima de filmes cadastrada!\n");
             break;
         case 2:
             mostrarFilmes();
-
             break;
         case 3:
-            if (totalFilmes == 0) {
-                printf("\nNenhum filme foi cadastrado ainda!\n");
-                }
-                else {
+            if (totalFilmes == 0) printf("\nNenhum filme foi cadastrado ainda!\n");
+            else {
             printf("Digite o indice do filme que voce esta procurando: ");
             scanf("%d", &index);
             exibirFilme(index);
@@ -84,9 +77,9 @@ int main()
             carregarFilmes();
             break;
         case 6:
-        if (totalFilmes == 0) {
-            printf("\nNenhum filme foi cadastrado ainda!\n");
-        } else {
+        if (totalFilmes == 0)
+        printf("\nNenhum filme foi cadastrado ainda!\n");
+            else {
             printf("\nDigite o titulo do filme que voce esta procurando.\n");
             getchar();
             fgets(name, MAX_STRING, stdin);
@@ -115,19 +108,18 @@ int main()
             printf("Quantidade em estoque: %d\n", f->quantidade);
             opcaoAcaoFilme = showOtherOptions();
             if (opcaoAcaoFilme == 1) {
-                quantidadeAlugada = rentMovies(f);
+                quantidadeAlugada = rentMovies(f->quantidade);
                 if (quantidadeAlugada == 0) break;
                 printf("\nquantidade alugada: %d\n", quantidadeAlugada);
                 f->quantidade -= quantidadeAlugada;
                 printf("\nquantidade alugada atualizada: %d\n", f->quantidade);
+                printReceipt(f->titulo, f->quantidade);
                 mostrarFilmes();
             }
             else if (opcaoAcaoFilme == 2) {
                 deleteMovie(f);
             }
-            else {
-                break;
-            }
+            else break;
         }
             break;
         default:
@@ -218,10 +210,10 @@ int showOtherOptions()
     } while (option != 4);
 }
 
-int rentMovies(Filme *f)
+int rentMovies(int quantidadeDisponivel)
 {
     int quantidadeDemanda;
-    if (f->quantidade == 0)
+    if (quantidadeDisponivel == 0)
     {
         printf("\nFilme esgotado!\n");
         return 0;
@@ -229,20 +221,28 @@ int rentMovies(Filme *f)
 
     do
     {
-        printf("\nQuantidade disponivel: %d\n", f->quantidade);
+        printf("\nQuantidade disponivel: %d\n", quantidadeDisponivel);
 
         printf("Informe quantas copias voce quer: ");
 
         scanf("%d", &quantidadeDemanda);
 
-        if (quantidadeDemanda > f->quantidade)
+        if (quantidadeDemanda > quantidadeDisponivel)
             printf("\nQuantidade maior que a disponivel, tente novamente!\n");
 
         if (quantidadeDemanda == 0)
             printf("\nQuantidade igual a zero, tente novamente!\n");
 
-    } while (quantidadeDemanda > f->quantidade || quantidadeDemanda == 0);
+    } while (quantidadeDemanda > quantidadeDisponivel || quantidadeDemanda == 0);
     return quantidadeDemanda;
+}
+
+void printReceipt(char title[MAX_STRING], int quantidade) {
+    int valorTotal = quantidade * 10;
+    printf("\n- - - Recibo - - -\n");
+    printf("\nFilmes alugados: %s\n", title);
+    printf("\nQuantidade de filmes alugados: %d\n", quantidade);
+    printf("\nValor total: %d\n", valorTotal);
 }
 
 void deleteMovie(Filme *f)
@@ -254,7 +254,7 @@ void deleteMovie(Filme *f)
             deletedMovieIndex = i;
     }
 
-    for (i = deletedMovieIndex; i < MAX_FILMES; i++)
+    for (i = deletedMovieIndex; i < MAX_FILMES - 1; i++)
     {
         filmes[i] = filmes[i + 1];
     }
@@ -303,10 +303,5 @@ void carregarFilmes()
     {
         totalFilmes++;
     }
-
     fclose(file);
 }
-
-// \"%[^\"]\": scan string??
-// O que fazer para pesquisar...
-// criar sexta função para pesquisar por string search(char string[MAX_STRING]);
