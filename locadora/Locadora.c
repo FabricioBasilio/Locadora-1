@@ -57,7 +57,7 @@ int main()
                 totalFilmes++;
                 printf("\nFilme cadastrado com sucesso!\n");
             }
-            else printf("\nQuantidade máxima de filmes cadastrada!\n");
+            else printf("\nQuantidade maxima de filmes cadastrada!\n");
             break;
         case 2:
             mostrarFilmes();
@@ -96,11 +96,8 @@ int main()
             if (isMovieAvailable == 0)
             {
                 printf("\nFilme nao encontrado!\n");
-                printf("Isso foi impresso pois o filme nao foi encontrado\n");
                 break;
             }
-            printf("\nIsso foi impresso pq o filme foi encontrado\n");
-
             printf("\nTítulo: %s\n", f->titulo);
             printf("Diretor: %s\n", f->diretor);
             printf("Ano de Lançamento: %d\n", f->anoLancamento);
@@ -113,7 +110,7 @@ int main()
                 printf("\nquantidade alugada: %d\n", quantidadeAlugada);
                 f->quantidade -= quantidadeAlugada;
                 printf("\nquantidade alugada atualizada: %d\n", f->quantidade);
-                printReceipt(f->titulo, f->quantidade);
+                printReceipt(f->titulo, quantidadeAlugada);
                 mostrarFilmes();
             }
             else if (opcaoAcaoFilme == 2) {
@@ -237,11 +234,11 @@ int rentMovies(int quantidadeDisponivel)
     return quantidadeDemanda;
 }
 
-void printReceipt(char title[MAX_STRING], int quantidade) {
-    int valorTotal = quantidade * 10;
+void printReceipt(char title[MAX_STRING], int quantidadeVendida) {
+    int valorTotal = quantidadeVendida * 10;
     printf("\n- - - Recibo - - -\n");
     printf("\nFilmes alugados: %s\n", title);
-    printf("\nQuantidade de filmes alugados: %d\n", quantidade);
+    printf("\nQuantidade de filmes alugados: %d\n", quantidadeVendida);
     printf("\nValor total: %d\n", valorTotal);
 }
 
