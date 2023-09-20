@@ -80,14 +80,17 @@ int main()
                 if (opcaoAcaoFilme == 1)
                 {
                     quantidadeAlugada = rentMovies(f->quantidade);
-                    if (quantidadeAlugada == 0)
+                    if (quantidadeAlugada == 0) {
+                        printf("\nAluguel de filmes cancelado!\n");
                         break;
+                }
                     f->quantidade -= quantidadeAlugada;
                     printReceipt(f->titulo, quantidadeAlugada);
                 }
                 else if (opcaoAcaoFilme == 2)
                 {
                     deleteMovie(f);
+                    printf("\nFilme deletado com sucesso!\n");
                 }
                 else
                     break;
@@ -101,15 +104,15 @@ int main()
             carregarFilmes();
             break;
         case 6:
-            if (totalFilmes == 0)
+            if (totalFilmes == 0) {
                 printf("\nNenhum filme foi cadastrado ainda!\n");
-            else
-            {
+                break;
+                }
                 printf("\nDigite o titulo do filme que voce esta procurando.\n");
                 getchar();
                 fgets(name, MAX_STRING, stdin);
                 name[strcspn(name, "\n")] = '\0';
-                for (i = 0; i < MAX_FILMES; i++)
+                for (i = 0; i < totalFilmes; i++)
                 {
                     if (strcmp(name, filmes[i].titulo) == 0)
                     {
@@ -137,18 +140,20 @@ int main()
                 if (opcaoAcaoFilme == 1)
                 {
                     quantidadeAlugada = rentMovies(f->quantidade);
-                    if (quantidadeAlugada == 0)
+                    if (quantidadeAlugada == 0) {
+                        printf("\nAluguel de filmes cancelado!\n");
                         break;
+                }
                     f->quantidade -= quantidadeAlugada;
                     printReceipt(f->titulo, quantidadeAlugada);
                 }
                 else if (opcaoAcaoFilme == 2)
                 {
                     deleteMovie(f);
+                    printf("\nFilme deletado com sucesso!\n");
                 }
                 else
                     break;
-            }
             break;
         default:
             printf("\nOpcao invalida!\n");
@@ -226,11 +231,9 @@ int showOtherOptions(int opcaoAcaoFilme)
         {
         case 1:
             opcaoAcaoFilme = secondOption;
-            return opcaoAcaoFilme;
             break;
         case 2:
             opcaoAcaoFilme = secondOption;
-            return opcaoAcaoFilme;
             break;
         case 3:
             opcaoAcaoFilme = secondOption;
@@ -238,7 +241,7 @@ int showOtherOptions(int opcaoAcaoFilme)
         default:
             printf("\nOpcao invalida!\n");
         }
-    } while (secondOption >= 4);
+    } while (secondOption >= 4 || secondOption <= 0);
     return opcaoAcaoFilme;
 }
 
@@ -254,7 +257,7 @@ int rentMovies(int quantidadeDisponivel)
     do
     {
         printf("\nQuantidade disponivel: %d\n", quantidadeDisponivel);
-
+        printf("Digite 0 caso queira cancelar o aluguel.\n");
         printf("Informe quantas copias voce quer: ");
 
         scanf("%d", &quantidadeDemanda);
@@ -263,9 +266,9 @@ int rentMovies(int quantidadeDisponivel)
             printf("\nQuantidade maior que a disponivel, tente novamente!\n");
 
         if (quantidadeDemanda == 0)
-            printf("\nQuantidade igual a zero, tente novamente!\n");
+            return 0;
 
-    } while (quantidadeDemanda > quantidadeDisponivel || quantidadeDemanda == 0);
+    } while (quantidadeDemanda > quantidadeDisponivel);
     return quantidadeDemanda;
 }
 
