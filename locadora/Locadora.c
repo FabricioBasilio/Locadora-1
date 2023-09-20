@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 #define ARQUIVO "./filmes.txt"
 
 #define MAX_STRING 100
@@ -24,6 +25,7 @@ void deleteMovie(Filme *f);
 int rentMovies(int quantidadeDisponivel);
 int showOtherOptions(int opcaoAcaoFilme);
 void printReceipt(char title[MAX_STRING], int quantidade);
+void setTime();
 
 Filme filmes[MAX_FILMES];
 int totalFilmes = 0;
@@ -35,7 +37,7 @@ int main()
     char name[MAX_STRING];
     do
     {
-        printf("\n- - - Locadora de Filmes - - -\n");
+        printf("- - - Locadora de Filmes - - -\n");
         printf("1. Cadastrar filme \n");
         printf("2. Ver filmes cadastrados\n");
         printf("3. Pesquisar filme pelo indice \n");
@@ -68,7 +70,8 @@ int main()
             {
                 printf("Digite o indice do filme que voce esta procurando: ");
                 scanf("%d", &index);
-                if (index >= totalFilmes) {
+                if (index >= totalFilmes)
+                {
                     printf("\nO filme do indice digitado nao existe!\n");
                     printf("\nTotal de filmes: %d\n", totalFilmes);
                     break;
@@ -80,10 +83,11 @@ int main()
                 if (opcaoAcaoFilme == 1)
                 {
                     quantidadeAlugada = rentMovies(f->quantidade);
-                    if (quantidadeAlugada == 0) {
+                    if (quantidadeAlugada == 0)
+                    {
                         printf("\nAluguel de filmes cancelado!\n");
                         break;
-                }
+                    }
                     f->quantidade -= quantidadeAlugada;
                     printReceipt(f->titulo, quantidadeAlugada);
                 }
@@ -94,7 +98,6 @@ int main()
                 }
                 else
                     break;
-                
             }
             break;
         case 4:
@@ -104,56 +107,58 @@ int main()
             carregarFilmes();
             break;
         case 6:
-            if (totalFilmes == 0) {
+            if (totalFilmes == 0)
+            {
                 printf("\nNenhum filme foi cadastrado ainda!\n");
                 break;
-                }
-                printf("\nDigite o titulo do filme que voce esta procurando.\n");
-                getchar();
-                fgets(name, MAX_STRING, stdin);
-                name[strcspn(name, "\n")] = '\0';
-                for (i = 0; i < totalFilmes; i++)
+            }
+            printf("\nDigite o titulo do filme que voce esta procurando.\n");
+            getchar();
+            fgets(name, MAX_STRING, stdin);
+            name[strcspn(name, "\n")] = '\0';
+            for (i = 0; i < totalFilmes; i++)
+            {
+                if (strcmp(name, filmes[i].titulo) == 0)
                 {
-                    if (strcmp(name, filmes[i].titulo) == 0)
-                    {
-                        f = &filmes[i];
-                        isMovieAvailable = 1;
-                        printf("\nFilme encontrado!\n");
-                        break;
-                    }
-                }
-
-                if (isMovieAvailable == 0)
-                {
-                    printf("\nFilme nao encontrado!\n");
+                    f = &filmes[i];
+                    isMovieAvailable = 1;
+                    printf("\nFilme encontrado!\n");
                     break;
                 }
-                isMovieAvailable = 0;
-                printf("\nTitulo: %s\n", f->titulo);
-                printf("Diretor: %s\n", f->diretor);
-                printf("Ano de Lancamento: %d\n", f->anoLancamento);
-                printf("Classificacao: %.1f\n", f->classificacao);
-                printf("Quantidade em estoque: %d\n", f->quantidade);
+            }
 
-                opcaoAcaoFilme = showOtherOptions(opcaoAcaoFilme);
+            if (isMovieAvailable == 0)
+            {
+                printf("\nFilme nao encontrado!\n");
+                break;
+            }
+            isMovieAvailable = 0;
+            printf("\nTitulo: %s\n", f->titulo);
+            printf("Diretor: %s\n", f->diretor);
+            printf("Ano de Lancamento: %d\n", f->anoLancamento);
+            printf("Classificacao: %.1f\n", f->classificacao);
+            printf("Quantidade em estoque: %d\n", f->quantidade);
 
-                if (opcaoAcaoFilme == 1)
+            opcaoAcaoFilme = showOtherOptions(opcaoAcaoFilme);
+
+            if (opcaoAcaoFilme == 1)
+            {
+                quantidadeAlugada = rentMovies(f->quantidade);
+                if (quantidadeAlugada == 0)
                 {
-                    quantidadeAlugada = rentMovies(f->quantidade);
-                    if (quantidadeAlugada == 0) {
-                        printf("\nAluguel de filmes cancelado!\n");
-                        break;
-                }
-                    f->quantidade -= quantidadeAlugada;
-                    printReceipt(f->titulo, quantidadeAlugada);
-                }
-                else if (opcaoAcaoFilme == 2)
-                {
-                    deleteMovie(f);
-                    printf("\nFilme deletado com sucesso!\n");
-                }
-                else
+                    printf("\nAluguel de filmes cancelado!\n");
                     break;
+                }
+                f->quantidade -= quantidadeAlugada;
+                printReceipt(f->titulo, quantidadeAlugada);
+            }
+            else if (opcaoAcaoFilme == 2)
+            {
+                deleteMovie(f);
+                printf("\nFilme deletado com sucesso!\n");
+            }
+            else
+                break;
             break;
         default:
             printf("\nOpcao invalida!\n");
@@ -278,7 +283,39 @@ void printReceipt(char title[MAX_STRING], int quantidadeVendida)
     printf("\n- - - Recibo - - -\n");
     printf("\nFilme(s) alugado(s): %s\n", title);
     printf("\nQuantidade de filmes alugados: %d\n", quantidadeVendida);
-    printf("\nValor total: R$%d\n", valorTotal);
+    printf("\nValor total: R$%d,00\n", valorTotal);
+    setTime();
+}
+
+void setTime()
+{
+    struct tm *data_hora_atual;
+
+    time_t segundos;
+
+    time(&segundos);
+
+    data_hora_atual = localtime(&segundos);
+
+    printf("\nDia..........: %d\n", data_hora_atual->tm_mday);
+
+    printf("\nMes..........: %d\n", data_hora_atual->tm_mon + 1);
+
+    printf("\nAno..........: %d\n\n", data_hora_atual->tm_year + 1900);
+
+    printf("\nHora ........: %d:", data_hora_atual->tm_hour);
+    printf("%d:", data_hora_atual->tm_min);
+    printf("%d\n", data_hora_atual->tm_sec);
+
+    printf("\nData ........: %d/", data_hora_atual->tm_mday);
+    printf("%d/", data_hora_atual->tm_mon + 1);
+    printf("%d\n\n", data_hora_atual->tm_year + 1900);
+    
+    printf("\nData de devolucao: %d/", data_hora_atual->tm_mday + 7);
+    printf("%d/", data_hora_atual->tm_mon + 1);
+    printf("%d\n\n", data_hora_atual->tm_year + 1900);
+
+    
 }
 
 void deleteMovie(Filme *f)
