@@ -22,6 +22,7 @@ void salvarFilmes();
 void carregarFilmes();
 void deleteMovie(Filme *f);
 int rentMovies(int quantidadeDisponivel);
+int showOtherOptions(int opcaoAcaoFilme);
 void printReceipt(char title[MAX_STRING], int quantidade);
 
 Filme filmes[MAX_FILMES];
@@ -29,7 +30,7 @@ int totalFilmes = 0;
 
 int main()
 {
-    int firstOption, index, i, isMovieAvailable = 0, opcaoAcaoFilme, secondOption, quantidadeAlugada;
+    int firstOption, index, i, isMovieAvailable = 0, opcaoAcaoFilme, quantidadeAlugada;
     Filme *f;
     char name[MAX_STRING];
     do
@@ -67,7 +68,30 @@ int main()
             {
                 printf("Digite o indice do filme que voce esta procurando: ");
                 scanf("%d", &index);
+                if (index >= totalFilmes) {
+                    printf("\nO filme do indice digitado nao existe!\n");
+                    printf("\nTotal de filmes: %d\n", totalFilmes);
+                    break;
+                }
                 exibirFilme(index);
+                f = &filmes[index];
+                opcaoAcaoFilme = showOtherOptions(opcaoAcaoFilme);
+
+                if (opcaoAcaoFilme == 1)
+                {
+                    quantidadeAlugada = rentMovies(f->quantidade);
+                    if (quantidadeAlugada == 0)
+                        break;
+                    f->quantidade -= quantidadeAlugada;
+                    printReceipt(f->titulo, quantidadeAlugada);
+                }
+                else if (opcaoAcaoFilme == 2)
+                {
+                    deleteMovie(f);
+                }
+                else
+                    break;
+                
             }
             break;
         case 4:
@@ -101,36 +125,14 @@ int main()
                     printf("\nFilme nao encontrado!\n");
                     break;
                 }
-
+                isMovieAvailable = 0;
                 printf("\nTitulo: %s\n", f->titulo);
                 printf("Diretor: %s\n", f->diretor);
                 printf("Ano de Lancamento: %d\n", f->anoLancamento);
                 printf("Classificacao: %.1f\n", f->classificacao);
                 printf("Quantidade em estoque: %d\n", f->quantidade);
-                do
-                {
-                    printf("\n- - - Acoes para o filme - - -\n");
-                    printf("1. Alugar filme\n");
-                    printf("2. Excluir filme\n");
-                    printf("3. Ir para a tela principal\n");
-                    printf("Escolha uma opcao: ");
-                    scanf("%d", &secondOption);
 
-                    switch (secondOption)
-                    {
-                    case 1:
-                        opcaoAcaoFilme = secondOption;
-                        break;
-                    case 2:
-                        opcaoAcaoFilme = secondOption;
-                        break;
-                    case 3:
-                        opcaoAcaoFilme = secondOption;
-                        break;
-                    default:
-                        printf("\nOpcao invalida!\n");
-                    }
-                } while (secondOption > 4);
+                opcaoAcaoFilme = showOtherOptions(opcaoAcaoFilme);
 
                 if (opcaoAcaoFilme == 1)
                 {
@@ -206,6 +208,38 @@ void mostrarFilmes()
             exibirFilme(i);
         }
     }
+}
+
+int showOtherOptions(int opcaoAcaoFilme)
+{
+    int secondOption;
+    do
+    {
+        printf("\n- - - Acoes para o filme - - -\n");
+        printf("1. Alugar filme\n");
+        printf("2. Excluir filme\n");
+        printf("3. Ir para a tela principal\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &secondOption);
+
+        switch (secondOption)
+        {
+        case 1:
+            opcaoAcaoFilme = secondOption;
+            return opcaoAcaoFilme;
+            break;
+        case 2:
+            opcaoAcaoFilme = secondOption;
+            return opcaoAcaoFilme;
+            break;
+        case 3:
+            opcaoAcaoFilme = secondOption;
+            break;
+        default:
+            printf("\nOpcao invalida!\n");
+        }
+    } while (secondOption >= 4);
+    return opcaoAcaoFilme;
 }
 
 int rentMovies(int quantidadeDisponivel)
