@@ -44,9 +44,14 @@ int main()
         printf("4. Salvar filmes cadastrados \n");
         printf("5. Carregar filmes \n");
         printf("6. Pesquisar filme pelo titulo \n");
-        printf("10. Sair \n");
+        printf("7. Sair \n");
         printf("Escolha uma opcao: ");
         scanf("%d", &firstOption);
+        if (firstOption < 1 || firstOption > 7)
+        {
+            printf("\nOpcao invalida.\n");
+            continue;
+        }
 
         switch (firstOption)
         {
@@ -161,10 +166,10 @@ int main()
                 break;
             break;
         default:
-            printf("\nOpcao invalida!\n");
+            printf("\nPrograma encerrado!\n");
         }
 
-    } while (firstOption != 10);
+    } while (firstOption != 7);
 
     return 0;
 }
@@ -246,7 +251,7 @@ int showOtherOptions(int opcaoAcaoFilme)
         default:
             printf("\nOpcao invalida!\n");
         }
-    } while (secondOption >= 4 || secondOption <= 0);
+    } while (secondOption > 3 || secondOption < 1);
     return opcaoAcaoFilme;
 }
 
@@ -310,12 +315,10 @@ void setTime()
     printf("\nData ........: %d/", data_hora_atual->tm_mday);
     printf("%d/", data_hora_atual->tm_mon + 1);
     printf("%d\n\n", data_hora_atual->tm_year + 1900);
-    
+
     printf("\nData de devolucao: %d/", data_hora_atual->tm_mday + 7);
     printf("%d/", data_hora_atual->tm_mon + 1);
     printf("%d\n\n", data_hora_atual->tm_year + 1900);
-
-    
 }
 
 void deleteMovie(Filme *f)
