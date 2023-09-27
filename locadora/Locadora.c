@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdlib.h>
 #include <time.h>
 #define ARQUIVO "./filmes.txt"
 
@@ -32,9 +33,10 @@ int totalFilmes = 0;
 
 int main()
 {
-    int firstOption, index, i, isMovieAvailable = 0, opcaoAcaoFilme, quantidadeAlugada;
+    int stringLength, firstOption, index, i, isMovieAvailable = 0, opcaoAcaoFilme, quantidadeAlugada, isValidInput;
     Filme *f;
     char name[MAX_STRING];
+    char firstOptionText[MAX_STRING];
     do
     {
         printf("- - - Locadora de Filmes - - -\n");
@@ -46,10 +48,33 @@ int main()
         printf("6. Pesquisar filme pelo titulo \n");
         printf("7. Sair \n");
         printf("Escolha uma opcao: ");
-        scanf("%d", &firstOption);
+        fgets(firstOptionText, MAX_STRING, stdin);
+        firstOptionText[strcspn(firstOptionText, "\n")] = '\0';
+        // Verifique se a entrada contém apenas dígitos
+        stringLength = strlen(firstOptionText);
+        isValidInput = 1;
+        for (i = 0; i < stringLength; i++)
+        {
+            if (!isdigit(firstOptionText[i]))
+            {
+                isValidInput = 0;
+                printf("\nValue of the loop: %c", firstOptionText[i]);
+                break;
+            }
+        }
+
+        if (!isValidInput)
+        {
+            printf("\nOpcao invalida. Por favor, insira um numero valido.\n");
+            continue;
+        }
+
+        // Converta a string para um número inteiro
+        firstOption = atoi(firstOptionText);
+
         if (firstOption < 1 || firstOption > 7)
         {
-            printf("\nOpcao invalida.\n");
+            printf("\nOpcao invalida. Escolha uma opcao de 1 a 7.\n");
             continue;
         }
 
