@@ -3,8 +3,8 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <time.h>
-#define ARQUIVO "./filmes.txt"
 
+#define ARQUIVO "./filmes.txt"
 #define MAX_STRING 100
 #define MAX_FILMES 5
 
@@ -27,19 +27,19 @@ int rentMovies(int quantidadeDisponivel);
 int showOtherOptions(int opcaoAcaoFilme);
 void printReceipt(char title[MAX_STRING], int quantidade);
 void setTime();
+void flush();
 
 Filme filmes[MAX_FILMES];
 int totalFilmes = 0;
 
 int main()
 {
-    int stringLength, firstOption, index, i, isMovieAvailable = 0, opcaoAcaoFilme, quantidadeAlugada, isValidInput;
+    int firstOption, index, i, isMovieAvailable = 0, opcaoAcaoFilme, quantidadeAlugada;
     Filme *f;
     char name[MAX_STRING];
-    char firstOptionText[MAX_STRING];
     do
     {
-        printf("- - - Locadora de Filmes - - -\n");
+        printf("- - - LOCADORA DE FILMES - - -\n");
         printf("1. Cadastrar filme \n");
         printf("2. Ver filmes cadastrados\n");
         printf("3. Pesquisar filme pelo indice \n");
@@ -48,35 +48,9 @@ int main()
         printf("6. Pesquisar filme pelo titulo \n");
         printf("7. Sair \n");
         printf("Escolha uma opcao: ");
-        fgets(firstOptionText, MAX_STRING, stdin);
-        firstOptionText[strcspn(firstOptionText, "\n")] = '\0';
-        // Verifique se a entrada contém apenas dígitos
-        stringLength = strlen(firstOptionText);
-        isValidInput = 1;
-        for (i = 0; i < stringLength; i++)
-        {
-            if (!isdigit(firstOptionText[i]))
-            {
-                isValidInput = 0;
-                printf("\nValue of the loop: %c", firstOptionText[i]);
-                break;
-            }
-        }
-
-        if (!isValidInput)
-        {
-            printf("\nOpcao invalida. Por favor, insira um numero valido.\n");
-            continue;
-        }
-
-        // Converta a string para um número inteiro
-        firstOption = atoi(firstOptionText);
-
-        if (firstOption < 1 || firstOption > 7)
-        {
-            printf("\nOpcao invalida. Escolha uma opcao de 1 a 7.\n");
-            continue;
-        }
+        scanf("%d", &firstOption);
+        flush();
+        system("cls");
 
         switch (firstOption)
         {
@@ -98,12 +72,14 @@ int main()
                 printf("\nNenhum filme foi cadastrado ainda!\n");
             else
             {
+                for (i = 0; i < totalFilmes; i++) {
+                    printf("%d: %s\n", i, filmes[i].titulo);
+                }
                 printf("Digite o indice do filme que voce esta procurando: ");
                 scanf("%d", &index);
                 if (index >= totalFilmes)
                 {
                     printf("\nO filme do indice digitado nao existe!\n");
-                    printf("\nTotal de filmes: %d\n", totalFilmes);
                     break;
                 }
                 exibirFilme(index);
@@ -143,7 +119,6 @@ int main()
                 break;
             }
             printf("\nDigite o titulo do filme que voce esta procurando.\n");
-            getchar();
             fgets(name, MAX_STRING, stdin);
             name[strcspn(name, "\n")] = '\0';
             for (i = 0; i < totalFilmes; i++)
@@ -191,7 +166,7 @@ int main()
                 break;
             break;
         default:
-            printf("\nPrograma encerrado!\n");
+            printf("\nCodigo invalido\n");
         }
 
     } while (firstOption != 7);
@@ -202,9 +177,8 @@ int main()
 Filme cadastrarFilme()
 {
     Filme f;
-    getchar();
 
-    printf("\n- - - Cadastro de Filme - - -\n");
+    printf("\n- - - CADASTRO DE FILME - - -\n");
     printf("Informe o titulo do filme: ");
     fgets(f.titulo, MAX_STRING, stdin);
     f.titulo[strcspn(f.titulo, "\n")] = '\0';
@@ -237,7 +211,7 @@ void exibirFilme(int i)
 
 void mostrarFilmes()
 {
-    printf("\n- - - Lista de Filmes - - -\n");
+    printf("\n- - - LISTA DE FILMES - - -\n");
 
     if (totalFilmes == 0)
         printf("Nenhum filme foi cadastrado ainda!\n");
@@ -255,12 +229,13 @@ int showOtherOptions(int opcaoAcaoFilme)
     int secondOption;
     do
     {
-        printf("\n- - - Acoes para o filme - - -\n");
+        printf("\n- - - ACOES PARA O FILME - - -\n");
         printf("1. Alugar filme\n");
         printf("2. Excluir filme\n");
         printf("3. Ir para a tela principal\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &secondOption);
+        flush();
 
         switch (secondOption)
         {
@@ -310,7 +285,7 @@ int rentMovies(int quantidadeDisponivel)
 void printReceipt(char title[MAX_STRING], int quantidadeVendida)
 {
     int valorTotal = quantidadeVendida * 10;
-    printf("\n- - - Recibo - - -\n");
+    printf("\n- - - RECIBO - - -\n");
     printf("\nFilme(s) alugado(s): %s\n", title);
     printf("\nQuantidade de filmes alugados: %d\n", quantidadeVendida);
     printf("\nValor total: R$%d,00\n", valorTotal);
@@ -331,7 +306,7 @@ void setTime()
 
     printf("\nMes..........: %d\n", data_hora_atual->tm_mon + 1);
 
-    printf("\nAno..........: %d\n\n", data_hora_atual->tm_year + 1900);
+    printf("\nAno..........: %d\n", data_hora_atual->tm_year + 1900);
 
     printf("\nHora ........: %d:", data_hora_atual->tm_hour);
     printf("%d:", data_hora_atual->tm_min);
@@ -339,11 +314,15 @@ void setTime()
 
     printf("\nData ........: %d/", data_hora_atual->tm_mday);
     printf("%d/", data_hora_atual->tm_mon + 1);
-    printf("%d\n\n", data_hora_atual->tm_year + 1900);
+    printf("%d\n", data_hora_atual->tm_year + 1900);
 
     printf("\nData de devolucao: %d/", data_hora_atual->tm_mday + 7);
     printf("%d/", data_hora_atual->tm_mon + 1);
     printf("%d\n\n", data_hora_atual->tm_year + 1900);
+}
+
+void flush() {
+    while(getchar() != '\n');
 }
 
 void deleteMovie(Filme *f)
