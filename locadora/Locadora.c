@@ -8,6 +8,9 @@
 #define MAX_STRING 100
 #define MAX_FILMES 5
 
+//Acadêmico: Fabrício Pantoja Basílio
+//Turma: 2023
+
 typedef struct
 {
     char titulo[MAX_STRING];
